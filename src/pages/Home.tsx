@@ -73,33 +73,89 @@ const NotificationStripe = () => {
   );
 };
 
+const BackgroundSlider = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  const images = [
+    'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80',
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {images.map((image, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 transform
+            ${index === currentImageIndex 
+              ? 'opacity-100 translate-x-0' 
+              : index < currentImageIndex 
+                ? 'opacity-0 -translate-x-full' 
+                : 'opacity-0 translate-x-full'}`}
+          style={{
+            backgroundImage: `url(${image})`,
+            zIndex: index === currentImageIndex ? 1 : 0
+          }}
+        />
+      ))}
+      {/* Overlay gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/50 to-black/70 z-10" />
+      
+      {/* Animated particles */}
+      <div className="absolute inset-0 z-20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_400px_at_50%_300px,rgba(99,102,241,0.1),transparent)] animate-pulse" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [perspective:1000px]" />
+      </div>
+
+      {/* Progress indicators */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 z-30">
+        {images.map((_, index) => (
+          <div
+            key={index}
+            className={`w-16 h-1 rounded-full transition-all duration-500 
+              ${index === currentImageIndex 
+                ? 'bg-white scale-100' 
+                : 'bg-white/30 scale-90'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Notification Stripe */}
       <NotificationStripe />
 
-      {/* Hero Section */}
-      <div
-        className="h-screen bg-cover bg-center relative"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80")',
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
-        <div className="absolute inset-0 flex items-center justify-center">
+      {/* Hero Section with Background Slider */}
+      <div className="h-screen relative overflow-hidden">
+        <BackgroundSlider />
+        
+        <div className="relative z-30 h-full flex items-center justify-center">
           <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
               Empowering Young Minds
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto animate-fade-in-up">
               Nurturing talent and creating opportunities for students in grades
               5-10 through innovative educational programs
             </p>
             <Link
               to="/events"
-              className="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition-colors duration-200"
+              className="inline-flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg text-lg font-semibold 
+                hover:bg-indigo-700 transition-all duration-300 hover:scale-105 animate-fade-in-up-delayed"
             >
               Explore Our Events
               <ArrowRight className="ml-2" size={20} />
